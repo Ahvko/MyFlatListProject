@@ -1,20 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 
-export default function App() {
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, FlatList } from 'react-native';
+import DATA from './data';
+import Row from './components/Row';
+import Search from './components/Search';
+
+const App = () => {
+  const [searchData, setSearchData] = useState([]);
+
+  useEffect(() => {
+    setSearchData(DATA);
+  }, []);
+
+  const executeSearch = (searchText) => {
+    const filteredData = DATA.filter(item =>
+      item.lastname.toLowerCase().startsWith(searchText.toLowerCase())
+    );
+    setSearchData(filteredData);
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView>
+      <Search executeSearch={executeSearch} />
+      <FlatList
+        data={searchData}
+        renderItem={({ item }) => <Row person={item} />}
+        keyExtractor={item => item.id.toString()}
+      />
+    </SafeAreaView>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
